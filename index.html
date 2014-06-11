@@ -31,6 +31,14 @@
 			}
 		</script>
 
+    <style>
+      .large-code {
+        font-size: 26px !important;
+        line-height: 26px !important;
+        margin-top: 20px !important;
+        min-height: 500px !important;
+      }
+    </style>
 		<!--[if lt IE 9]>
 		<script src="lib/js/html5shiv.js"></script>
 		<![endif]-->
@@ -83,27 +91,49 @@
 
 
 				<section>
-					<h2>Why?</h2>
+					<h2>Why another framework?</h2>
           <ul>
             <li>Config vs Code</li>
             <li>Node objects not modified</li>
             <li>Ran into issues with multiple teams building functionality at the same time</li>
-            <li></li>
+            <li>Plugin architecture</li>
           </ul>
 					<p>
 					</p>
 
 					<aside class="notes">
             <ul>
-              <li></li>
+              <li>Configuration best seen at the route level (Param validation via Joi, Prereqs, Cookie, Cache)</li>
+              <li>Express and Director modify the Node/Connect objects themselves directly and are dependent upon that API</li>
+              <li>"Plugin" is not the best word to describe it</li>
+              <li>Allows you to build your app in pluggable components</li>
+              <li>Great for large teams (e.g. Wishlist, Checkout, My Account, etc.)</li>
             </ul>
 					</aside>
 				</section>
 
 
-				<section style="height: 100%;">
+        <!-- Template slides -->
+				<section>
+					<h2>What's built-in?</h2>
+          <ul>
+            <li>Cookies / Encrypted Cookies (via iron) (server.state)</li>
+            <li>Logging (server.log)</li>
+            <li>Route prerequisites</li>
+            <li>Server methods (were Helpers) (server.method)</li>
+            <li>Plugins</li>
+            <li>Errors (via boom)</li>
+          </ul>
 
-					<pre><code data-trim contenteditable style="font-size: 26px; line-height: 26px; margin-top: 20px; min-height: 500px;">
+					<aside class="notes">
+					</aside>
+				</section>
+
+
+				<section style="height: 100%;">
+          <h4>Simple server</h4>
+
+					<pre><code data-trim class="large-code">
 
 var Hapi = require('hapi');
 
@@ -138,6 +168,55 @@ server.start();
 				</section>
 
 
+				<section>
+          <h4></h4>
+
+					<pre><code data-trim class="large-code">
+
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
+
+
+				<section>
+          <h4>Errors</h4>
+
+					<pre><code data-trim class="large-code">
+var Hapi = require('hapi');
+Hapi.error.badRequest('Invalid parameter value');
+Hapi.error.unauthorized('Stale timestamp', 'Hawk', { ts: fresh, tsm: tsm });
+Hapi.error.forbidden('Missing permissions');
+Hapi.error.notFound('Wrong number');
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
+
+
+				<section>
+          <h4>server.cache</h4>
+
+					<pre><code data-trim class="large-code">
+var cache = server.cache('countries', 
+{ 
+  expiresIn: 60 * 1000,  // expires in 1 min
+  staleIn: 45 * 1000,    // stale in 45 seconds
+  staleTimeout: 300 //
+ });
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
+
+
+
+
+
+
         <!-- Template slides -->
 				<section>
 					<h2></h2>
@@ -151,7 +230,7 @@ server.start();
         <!-- Code Slide -->
 				<section>
 
-					<pre><code data-trim contenteditable style="font-size: 18px; margin-top: 20px;">
+					<pre><code data-trim class="large-code">
 
 					</code></pre>
 
