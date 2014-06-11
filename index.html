@@ -60,6 +60,18 @@
 					</aside>
 				</section>
 
+				<section>
+					<h2>What is hapi?</h2>
+          <ul>
+            <li class="fragment">Built by WalmartLabs</li>
+            <li class="fragment">For web apps and REST API's on Node</li>
+            <li class="fragment">Based on Express and Director</li>
+          </ul>
+
+					<aside class="notes">
+					</aside>
+				</section>
+
 
 				<section>
           <h2>
@@ -78,25 +90,25 @@
 				</section>
 
 				<section>
-					<h2>What is hapi?</h2>
-          <ul>
-            <li>Built by WalmartLabs</li>
-            <li>For web apps and REST API's on Node.js</li>
-            <li>Based on Express and Director</li>
-          </ul>
+					<h2>Node Black Friday</h2>
+					<p>
+					</p>
 
 					<aside class="notes">
 					</aside>
 				</section>
 
+        <section data-background="nodebf.png" data-background-size="60%">
+        </section>
 
 				<section>
 					<h2>Why another framework?</h2>
           <ul>
-            <li>Config vs Code</li>
-            <li>Node objects not modified</li>
-            <li>Ran into issues with multiple teams building functionality at the same time</li>
-            <li>Plugin architecture</li>
+            <li class="fragment">Config vs Code</li>
+            <li class="fragment">Node objects not modified</li>
+            <li class="fragment">Ran into issues with multiple teams building functionality at the same time</li>
+            <li class="fragment">Plugin architecture *confusing*</li>
+            <li class="fragment">Server packaging (e.g. Wishlist, Checkout, My Account, etc.)</li>
           </ul>
 					<p>
 					</p>
@@ -112,17 +124,16 @@
 					</aside>
 				</section>
 
-
-        <!-- Template slides -->
 				<section>
-					<h2>Great Features</h2>
+					<h2>Modules</h2>
           <ul>
-            <li>Cookies / Encrypted Cookies (via iron) (server.state)</li>
-            <li>Logging (via good)</li>
-            <li>Route prerequisites</li>
-            <li>Server methods (were Helpers) (server.method)</li>
-            <li>Plugins</li>
-            <li>Errors (via boom)</li>
+            <li>joi - validation</li>
+            <li>iron - encryption</li>
+            <li>lout - API doc generator</li>
+            <li>good - process monitoring (logs)</li>
+            <li>catbox - object caching (redis, riak, etc)</li>
+            <li>boom - friendly error objects</li>
+            <li>bassmaster - batch requests</li>
           </ul>
 
 					<aside class="notes">
@@ -151,9 +162,9 @@ server.route({
 });
 
 
-
 // Start the server
 server.start();
+console.log(server.table());  // routing table
 
 					</code></pre>
 
@@ -167,12 +178,68 @@ server.start();
 					</aside>
 				</section>
 
-
 				<section>
-          <h4></h4>
+          <h4>Validation with Joi</h4>
 
 					<pre><code data-trim class="large-code">
 
+var Joi = require("joi");
+
+server.route({
+  method: 'GET',
+  vhost: 'example.com',
+  path: '/hello',
+  validate: {
+      path: {
+          name: Joi.string().min(8).max(100)
+      },
+      query: {
+          mood: Joi.string().valid(["neutral","happy","sad"])
+                            .default("neutral")
+      }
+  }
+  handler: function (request, reply) {
+    reply('hello world');
+  }
+});
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+          <h4>Vhost</h4>
+
+					<pre><code data-trim class="large-code">
+server.route({
+  method: 'GET',
+  vhost: 'example.com',
+  path: '/hello',
+  handler: function (request, reply) {
+    reply('hello world');
+  }
+});
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+          <h4>Caching</h4>
+
+					<pre><code data-trim class="large-code">
+server.route({
+  method: 'GET',
+  path: '/hello',
+  config: {
+    handler: function (request, reply) {
+      reply('hello world');
+    },
+    cache: { expiresIn: 60 * 5 * 1000 } // cache-control: max-age=300, must-revalidate 
+  }
+});
 					</code></pre>
 
 					<aside class="notes">
@@ -197,15 +264,15 @@ Hapi.error.notFound('Wrong number');
 
 
 				<section>
-          <h4>server.cache</h4>
+          <h4>Stale cache checking (server.cache)</h4>
 
 					<pre><code data-trim class="large-code">
 var cache = server.cache('countries', 
 { 
   expiresIn: 60 * 1000,  // expires in 1 min
   staleIn: 45 * 1000,    // stale in 45 seconds
-  staleTimeout: 300 //
- });
+  staleTimeout: 300 // wait before checking if an item is stale
+});
 					</code></pre>
 
 					<aside class="notes">
@@ -213,9 +280,20 @@ var cache = server.cache('countries',
 				</section>
 
 				<section>
-          <h4>good - process monitoring</h4>
-					<pre><code data-trim class="large-code">
+					<h2>good - process monitoring</h2>
+          <h3>Features</h3>
+          <ul>
+            <li>Broadcast logs to remote endpoint (http, udp, redis)</li>
+            <li>Replaying log requests - via "replay"</li>
+          </ul>
 
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+          <h4>good (plugin) - process monitoring</h4>
+					<pre><code data-trim class="large-code">
 var Hapi = require('hapi');
 
 var server = new Hapi.Server();
@@ -242,18 +320,23 @@ server.pack.require('good', options, function (err) {
 					</aside>
 				</section>
 
+
+        <!-- 
 				<section>
-					<h2>good - process monitoring</h2>
-          <h3>Features</h3>
+					<h2>Feature Highlight</h2>
           <ul>
-            <li>Broadcast logs to remote endpoint (http, udp, redis)</li>
-            <li>Replaying log requests - via "replay"</li>
+            <li>Cookies / Encrypted Cookies (via iron) (server.state)</li>
+            <li>Logging (via good)</li>
+            <li>Route prerequisites</li>
+            <li>Server methods (were Helpers) (server.method)</li>
+            <li>Plugins</li>
+            <li>Errors (via boom)</li>
           </ul>
 
 					<aside class="notes">
 					</aside>
 				</section>
-
+        -->
 
 
 
