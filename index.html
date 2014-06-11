@@ -128,6 +128,7 @@
 					<h2>Modules</h2>
           <ul>
             <li>joi - validation</li>
+            <li>travelouge - Passport.js integration</li>
             <li>iron - encryption</li>
             <li>lout - API doc generator</li>
             <li>good - process monitoring (logs)</li>
@@ -246,9 +247,22 @@ server.route({
 					</aside>
 				</section>
 
+				<section>
+          <h4>API doc generation - lout</h4>
+
+					<pre><code data-trim class="large-code">
+// server code here
+server.pack.require('lout', function() {
+    server.start();
+});
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
 
 				<section>
-          <h4>Errors</h4>
+          <h4>Errors - boom</h4>
 
 					<pre><code data-trim class="large-code">
 var Hapi = require('hapi');
@@ -262,6 +276,22 @@ Hapi.error.notFound('Wrong number');
 					</aside>
 				</section>
 
+				<section>
+          <h4>Views / Templating Engines</h4>
+
+					<pre><code data-trim class="large-code">
+server.views({
+    engines: {
+        html: 'handlebars',
+        jade: 'jade'
+    },
+    path: '/static/templates'
+});
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
 
 				<section>
           <h4>Stale cache checking (server.cache)</h4>
@@ -280,8 +310,7 @@ var cache = server.cache('countries',
 				</section>
 
 				<section>
-					<h2>good - process monitoring</h2>
-          <h3>Features</h3>
+					<h2>process monitoring - good</h2>
           <ul>
             <li>Broadcast logs to remote endpoint (http, udp, redis)</li>
             <li>Replaying log requests - via "replay"</li>
@@ -292,7 +321,7 @@ var cache = server.cache('countries',
 				</section>
 
 				<section>
-          <h4>good (plugin) - process monitoring</h4>
+          <h4>process monitoring - good</h4>
 					<pre><code data-trim class="large-code">
 var Hapi = require('hapi');
 
@@ -309,7 +338,6 @@ var options = {
 };
 
 server.pack.require('good', options, function (err) {
-
     if (!err) {
         // Plugin loaded successfully
     }
