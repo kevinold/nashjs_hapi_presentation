@@ -283,8 +283,17 @@ server.views({
         html: 'handlebars',
         jade: 'jade'
     },
-    path: '/static/templates'
+    path: '/templates'
 });
+
+var handler = function (request, reply) {
+
+    var context = {
+        title: 'Views Example',
+        message: 'Hello, World'
+    };
+    reply.view('hello', context);
+}
 					</code></pre>
 
 					<aside class="notes">
@@ -322,6 +331,25 @@ var handler = function (request, reply) {
 
         response.send();
     }, 1000);
+};
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+          <h4>Encrypted cookie - via iron</h4>
+
+					<pre><code data-trim class="large-code">
+server.state('visitor', {
+  ttl: 250000,
+  encoding: 'iron',
+  password: 'super-secret'
+});
+
+var handler = function (request, reply) {
+  reply.view('home').state('visitor', { foo: true }); // object in cookie
 };
 					</code></pre>
 
@@ -429,13 +457,17 @@ server.pack.require('good', options, function (err) {
             <li class="fragment">Transport encoding</li>
             <li class="fragment">Directory listing / serving</li>
             <li class="fragment">Proxying</li>
+            <li class="fragment">JSONP support on routes</li>
             <li class="fragment">Control over payload parsing</li>
+            <li class="fragment">Server methods (were Helpers) (server.method)</li>
+            <li class="fragment">Cookies support (Encrypted, Base64, Base64 + JSON) (server.state)</li>
            </ul>
 				</section>
 				<section>
 					<h2>Last thoughts...</h2>
           <ul>
             <li class="fragment">GREAT docs</li>
+            <li class="fragment">Plugins can be used elsewhere (iron, joi, etc)</li>
             <li class="fragment">hapijs.com released this week</li>
             <li class="fragment">npm just announce rewrite with hapi</li>
             <li class="fragment">Development moves VERY fast</li>
@@ -478,7 +510,6 @@ server.pack.require('good', options, function (err) {
             <li>Cookies / Encrypted Cookies (via iron) (server.state)</li>
             <li>Logging (via good)</li>
             <li>Route prerequisites</li>
-            <li>Server methods (were Helpers) (server.method)</li>
             <li>Plugins</li>
             <li>Errors (via boom)</li>
           </ul>
