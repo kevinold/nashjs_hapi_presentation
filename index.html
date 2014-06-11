@@ -188,20 +188,18 @@ var Joi = require("joi");
 
 server.route({
   method: 'GET',
-  vhost: 'example.com',
-  path: '/hello',
+  path: '/hello-world',
   validate: {
-      path: {
+      params: {
           name: Joi.string().min(8).max(100)
       },
       query: {
           mood: Joi.string().valid(["neutral","happy","sad"])
                             .default("neutral")
       }
-  }
-  handler: function (request, reply) {
-    reply('hello world');
-  }
+      // headers and payload too!
+  },
+  handler: function (request, reply) { reply('hello world'); }
 });
 					</code></pre>
 
@@ -228,7 +226,7 @@ server.route({
 				</section>
 
 				<section>
-          <h4>Caching</h4>
+          <h4>Caching headers</h4>
 
 					<pre><code data-trim class="large-code">
 server.route({
@@ -294,6 +292,44 @@ server.views({
 				</section>
 
 				<section>
+          <h4>Simple file serving</h4>
+
+					<pre><code data-trim class="large-code">
+server.route({
+  method: 'GET',
+  path: '/favicon.ico',
+  handler: {
+    file: 'favicon.ico'
+  }
+});
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+          <h4>Flow control - .hold() && .send()</h4>
+
+					<pre><code data-trim class="large-code">
+var handler = function (request, reply) {
+
+    var response = reply('success').hold();
+
+    // lookup user id, etc.
+
+    onTimeout(function () {
+
+        response.send();
+    }, 1000);
+};
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
           <h4>Stale cache checking (server.cache)</h4>
 
 					<pre><code data-trim class="large-code">
@@ -302,6 +338,45 @@ var cache = server.cache('countries',
   expiresIn: 60 * 1000,  // expires in 1 min
   staleIn: 45 * 1000,    // stale in 45 seconds
   staleTimeout: 300 // wait before checking if an item is stale
+});
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+          <h4>Route prerequisites</h4>
+
+					<pre><code data-trim class="large-code">
+var Hapi = require('hapi');
+var server = new Hapi.Server();
+
+var pre1 = function (request, reply) { reply('Hello'); };
+
+var pre2 = function (request, reply) { reply('World'); };
+
+var pre3 = function (request, reply) { 
+    reply(request.pre.m1 + ' ' + request.pre.m2);
+};
+
+server.route({
+    method: 'GET',
+    path: '/',
+    config: {
+        pre: [
+            [
+                // m1 and m2 executed in parallel
+                { method: pre1, assign: 'm1' },
+                { method: pre2, assign: 'm2' }
+            ],
+            { method: pre3, assign: 'm3' },
+        ],
+        handler: function (request, reply) {
+
+            reply(request.pre.m3 + '\n');
+        }
+    }
 });
 					</code></pre>
 
@@ -348,6 +423,53 @@ server.pack.require('good', options, function (err) {
 					</aside>
 				</section>
 
+				<section>
+					<h2>Also included...</h2>
+          <ul>
+            <li class="fragment">Transport encoding</li>
+            <li class="fragment">Directory listing / serving</li>
+            <li class="fragment">Proxying</li>
+            <li class="fragment">Control over payload parsing</li>
+           </ul>
+				</section>
+				<section>
+					<h2>Last thoughts...</h2>
+          <ul>
+            <li class="fragment">GREAT docs</li>
+            <li class="fragment">hapijs.com released this week</li>
+            <li class="fragment">npm just announce rewrite with hapi</li>
+            <li class="fragment">Development moves VERY fast</li>
+            <li class="fragment">PR's accepted; Community involvement highly encouraged</li>
+            <li class="fragment">Yes, it scales ;)</li>
+          </ul>
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>Resources</h2>
+          <ul>
+            <li>
+              <a href="http://hapijs.com">hapijs.com</a>
+            </li>
+            <li>
+              <a href="http://www.youtube.com/watch?v=ZI9wXL-add0">Hapi.js and why it's awesome</a>
+            </li>
+            <li>
+              <a href=""></a>
+            </li>
+            <li>
+              <a href=""></a>
+            </li>
+          </ul>
+				</section>
+
+				<section>
+					<h2>Thanks!</h2>
+          <br>
+          <h3>@kevinold</h3>
+          <h3>kevin@kevinold.com</h3>
+				</section>
 
         <!-- 
 				<section>
