@@ -115,10 +115,10 @@
 
         <!-- Template slides -->
 				<section>
-					<h2>What's built-in?</h2>
+					<h2>Great Features</h2>
           <ul>
             <li>Cookies / Encrypted Cookies (via iron) (server.state)</li>
-            <li>Logging (server.log)</li>
+            <li>Logging (via good)</li>
             <li>Route prerequisites</li>
             <li>Server methods (were Helpers) (server.method)</li>
             <li>Plugins</li>
@@ -212,7 +212,47 @@ var cache = server.cache('countries',
 					</aside>
 				</section>
 
+				<section>
+          <h4>good - process monitoring</h4>
+					<pre><code data-trim class="large-code">
 
+var Hapi = require('hapi');
+
+var server = new Hapi.Server();
+
+var options = {
+    subscribers: {
+        'console':                         ['ops', 'request', 'log', 'error'],
+        'http://localhost/logs':           ['log'],
+        '/tmp/logs/':                      ['request', 'log'],
+        'udp://127.0.0.1:9000':            ['request'],
+        'redis://127.0.0.1:6379/listname': ['request']
+    }
+};
+
+server.pack.require('good', options, function (err) {
+
+    if (!err) {
+        // Plugin loaded successfully
+    }
+});
+					</code></pre>
+
+					<aside class="notes">
+					</aside>
+				</section>
+
+				<section>
+					<h2>good - process monitoring</h2>
+          <h3>Features</h3>
+          <ul>
+            <li>Broadcast logs to remote endpoint (http, udp, redis)</li>
+            <li>Replaying log requests - via "replay"</li>
+          </ul>
+
+					<aside class="notes">
+					</aside>
+				</section>
 
 
 
